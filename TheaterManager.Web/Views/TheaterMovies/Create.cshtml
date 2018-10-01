@@ -1,0 +1,125 @@
+﻿@model TheaterManager.Web.Models.ShowtimeViewModel
+
+@{
+    ViewBag.Title = Model.Action + " Showtime";
+}
+
+<h2>@Model.Action Showtime</h2>
+
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div id="existing-movie">
+        <div class="form-group">
+            @Html.LabelFor(model => model.MovieID, "Movie", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("MovieID", null, htmlAttributes: new { @class = "form-control", required = true })
+                @Html.ValidationMessageFor(model => model.MovieID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2"></div>
+            <div class="col-md-10">
+                <button type="button" id="add-new-movie" class="btn btn-primary">Add New Movie</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="new-movie" style="display: none">
+        <div class="form-group">
+            @Html.LabelFor(model => model.Movie.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Movie.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Movie.Name, "Movie name is required.", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Movie.Genre, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Movie.Genre, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Movie.Genre, "Movie genre is required.", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Movie.Rating, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Movie.Rating, new { htmlAttributes = new { type = "number", @class = "form-control" }, required = false })
+                @Html.ValidationMessageFor(model => model.Movie.Rating, "Movie rating is required.", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-2"></div>
+            <div class="col-md-10">
+                <button type="button" id="use-existing-movie" class="btn btn-primary">Use Existing Movie</button>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Showtime, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Showtime, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Showtime, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div id="hidden-inputs">
+        @Html.EditorFor(model => model.Id)
+        @Html.EditorFor(model => model.TheaterID)
+        @Html.EditorFor(model => model.NewMovie)
+    </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@Model.Action" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+    }
+
+    <div>
+        <a href="javascript:void(0);" onclick="history.go(-1);">Back</a>
+    </div>
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        <script>
+            (function () {
+                $("#add-new-movie").on("click", function () {
+                    $("#NewMovie").val(true);
+                    toggleMovieFields(true);
+                });
+
+                $("#use-existing-movie").on("click", function () {
+                    $("#NewMovie").val(false);
+                    toggleMovieFields(false);
+                });
+
+                function toggleMovieFields(newMovie) {
+                    if (newMovie) {
+                        $("#existing-movie").hide();
+                        $("#new-movie").show();
+                        $("#Movie_Name").attr("required", true);
+                        $("#Movie_Genre").attr("required", true);
+                        $("#Movie_Rating").attr("required", true);
+                        $("MovieID").attr("required", false);
+                    } else {
+                        $("#existing-movie").show();
+                        $("#new-movie").hide();
+                        $("#Movie_Name").attr("required", false);
+                        $("#Movie_Genre").attr("required", false);
+                        $("#Movie_Rating").attr("required", false);
+                        $("MovieID").attr("required", true);
+                    }
+                }
+            })();
+        </script>
+    }

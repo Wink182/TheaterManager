@@ -1,0 +1,65 @@
+﻿@model TheaterManager.Web.Models.TheaterViewModel
+
+@{
+    ViewBag.Title = Model.Action + " Theater";
+}
+
+<h2>@Model.Action Theater</h2>
+
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div id="hidden-inputs">
+            @Html.EditorFor(model => model.TheaterID)
+            @Html.EditorFor(model => model.Latitude)
+            @Html.EditorFor(model => model.Longitude)
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" value="Create" class="btn btn-default">
+                    @Model.Action
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="javascript:void(0);" onclick="history.go(-1);">Back</a>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqaNLBAJN0-HHYYKD1Q_mIvRrnun8vUxY&libraries=places"></script>
+    <script>
+         var autocomplete = new google.maps.places.Autocomplete($("#Address").get(0));
+
+        autocomplete.addListener("place_changed", function () {
+            var place = autocomplete.getPlace();
+            $("#Latitude").val(place.geometry.location.lat());
+            $("#Longitude").val(place.geometry.location.lng());
+        });
+    </script>
+}

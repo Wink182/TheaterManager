@@ -1,0 +1,12 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Theater Manager</h1>
+    <p class="lead">Theater Manager allows you to manage theaters and their showtimes as well as search shows times based on time and location.</p>
+    <p>
+        @Html.ActionLink("Manage Theaters", "Index", "Theaters", "", htmlAttributes: new { @class = "btn btn-primary btn-lg" })
+        @Html.ActionLink("Search Showtimes", "Index", "TheaterMovies", "", htmlAttributes: new { @class = "btn btn-default btn-lg" })
+    </p>
+</div>

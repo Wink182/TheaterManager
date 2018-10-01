@@ -1,0 +1,34 @@
+﻿@model TheaterManager.Domain.Movie
+
+@{
+    ViewBag.Title = Model.Name;
+}
+
+<h2>@Model.Name</h2>
+
+@Html.ActionLink("Edit", "Edit", new { id = Model.MovieID }, htmlAttributes: new { @class = "btn btn-default" })
+@Html.ActionLink("Delete", "Delete", new { id = Model.MovieID }, htmlAttributes: new { @class = "btn btn-danger" })
+
+<div>
+    <hr/>
+    <dl>
+        <dt>
+            @Html.DisplayNameFor(model => model.Genre)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Genre)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Rating)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Rating)
+        </dd>
+    </dl>
+</div>
+<p>
+    <a href="javascript:void(0);" onclick="history.go(-1);">Back</a>
+</p>

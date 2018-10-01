@@ -1,0 +1,145 @@
+﻿@model TheaterManager.Web.Models.SearchShowtimesViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Available Showtimes</h2>
+
+<p id="loading-message" class="h3 text-center">Loading...</p>
+
+<div id="search-content" style="display: none">
+    @if (Model.Showtimes.Count() > 0)
+    {
+        using (Html.BeginForm())
+        {
+            <div id="search-div" class="well">
+                <div class="search-form">
+                    <div>
+                        @Html.LabelFor(model => model.SearchString, "Search", htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.SearchString, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    <div>
+                        @Html.LabelFor(model => model.SearchTime, "Showtime", htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.SearchTime, new { htmlAttributes = new { type = "datetime-local", @class = "form-control" } })
+                    </div>
+                    <div>
+                        @Html.LabelFor(model => model.SearchSortType, "Order results by", htmlAttributes: new { @class = "control-label" })
+                        <div>
+                            <label class="radio-inline">@Html.RadioButtonFor(model => model.SearchSortType, "showtime") Showtime</label>
+                            <label class="radio-inline">@Html.RadioButtonFor(model => model.SearchSortType, "location") Nearest location</label>
+                        </div>
+                    </div>
+                    <div id="location-details">
+                        @Html.LabelFor(model => model.LocationType, "Location", htmlAttributes: new { @class = "control-label" })
+                        <div>
+                            <label class="radio-inline">@Html.RadioButtonFor(model => model.LocationType, "current location") Use my location</label>
+                            <label class="radio-inline">@Html.RadioButtonFor(model => model.LocationType, "other location") User other location</label>
+                        </div>
+                    </div>
+                    <div id="location-search">
+                        @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label" })
+                        @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    @Html.EditorFor(model => model.Latitude)
+                    @Html.EditorFor(model => model.Longitude)
+                </div>
+                <button type="submit" class="btn btn-primary">Update Results</button>
+            </div>
+        }
+
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>Theater</th>
+                <th>Showtime</th>
+                <th>Distance</th>
+            </tr>
+
+            @foreach (var item in Model.Showtimes)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Movie.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Theater.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Showtime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Theater.Distance)
+                    </td>
+                </tr>
+            }
+
+        </table>
+    }
+    else
+    {
+        <h3>It looks like there aren't any available showtimes. You can view available theaters and add showtimes @Html.ActionLink("here", "Index", "Theaters")</h3>
+    }
+</div>
+@section Scripts {
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqaNLBAJN0-HHYYKD1Q_mIvRrnun8vUxY&libraries=places"></script>
+    <script>
+        (function () {
+            $("input[name='SearchSortType']").on("click", toggleLocationTypeDisplay);
+
+            var autocomplete = new google.maps.places.Autocomplete($("#Address").get(0));
+
+            autocomplete.addListener("place_changed", function () {
+                var place = autocomplete.getPlace();
+                $("#Latitude").val(place.geometry.location.lat());
+                $("#Longitude").val(place.geometry.location.lng());
+            });
+
+            $("input[name='LocationType']").on("click", toggleLocationSearchDisplay);
+
+            function toggleLoading() {
+                $("#loading-message").hide();
+                $("#search-content").show();
+            }
+
+            function toggleLocationTypeDisplay() {
+                var searchSortType = $("input[name='SearchSortType']:checked").val();
+
+                if (searchSortType === "location") {
+                    $("#location-details").show();
+                    toggleLocationSearchDisplay();
+                } else {
+                    $("#location-details").hide();
+                    $("#location-search").hide();
+                }
+            }
+
+            function toggleLocationSearchDisplay() {
+                var addressType = $("input[name='LocationType']:checked").val();
+
+                switch (addressType) {
+                    case "current location":
+                        $("#location-search").hide();
+
+                        navigator.geolocation.getCurrentPosition(function (position) {
+                            $("#Latitude").val(position.coords.latitude);
+                            $("#Longitude").val(position.coords.longitude);
+                        });
+                        break;
+                    case "other location":
+                        $("#location-search").show();
+                        break;
+                    default:
+
+                        break;
+                }
+            }
+
+            $(function () {
+                toggleLocationTypeDisplay();
+                toggleLocationSearchDisplay();
+                toggleLoading();
+            });
+        })();
+    </script>
+}
