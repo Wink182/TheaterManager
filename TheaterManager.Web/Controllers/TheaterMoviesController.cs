@@ -80,7 +80,7 @@ namespace TheaterManager.Web.Controllers
             var model = new ShowtimeViewModel();
             model.Action = "Create";
             model.TheaterID = TheaterID;
-            model.Showtime = DateTime.Now;
+            model.Showtime = DateTime.Now.AddDays(1);
             model.NewMovie = false;
             return View(model);
         }
